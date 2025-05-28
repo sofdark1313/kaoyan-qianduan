@@ -2,7 +2,7 @@
   <div class="register-container">
     <div class="register-box">
       <div class="register-header">
-        <img src="../assets/logo.png" alt="Logo" class="logo" />
+        <img src="../assets/logo.ico" alt="Logo" class="logo" />
         <h2>创建账号</h2>
         <p class="subtitle">加入我们，开启智能对话之旅</p>
       </div>
@@ -164,6 +164,14 @@ const handleSubmit = async () => {
   width: 80px;
   height: 80px;
   margin-bottom: 16px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0px); }
 }
 
 h2 {
@@ -171,6 +179,10 @@ h2 {
   color: #333;
   margin: 0 0 8px;
   font-weight: 600;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
