@@ -2,41 +2,41 @@
   <div class="chat-container">
     <el-container class="chat-layout">
       <el-header class="chat-header">
-        <div class="user-info">
-          <el-avatar :size="36" :icon="UserFilled" class="avatar" />
-          <div class="user-details">
-            <span class="username">{{ accountName }}</span>
-            <span class="user-type">{{ accountIdentity }}</span>
-          </div>
-        </div>
-        <div class="header-actions">
-          <el-dropdown @command="handleCommand" trigger="click">
-            <el-button type="text" class="menu-btn">
-              <el-icon><Setting /></el-icon>
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-              <el-dropdown-item command="upgrade">
-                <el-icon><Opportunity /></el-icon>
-                升级VIP
-              </el-dropdown-item>
-              <el-dropdown-item command="changePassword">
-                <el-icon><Lock /></el-icon>
-                修改密码
-              </el-dropdown-item>
-              <el-dropdown-item command="deactivate" divided>
-                <el-icon><Delete /></el-icon>
-                注销账号
-              </el-dropdown-item>
-              <el-dropdown-item command="logout" divided>
-                <el-icon><SwitchButton /></el-icon>
-                退出登录
-              </el-dropdown-item>
-            </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
-      </el-header>
+  <div class="user-info">
+    <el-avatar :size="36" :icon="UserFilled" class="avatar" />
+    <div class="user-details">
+      <span class="username">{{ accountName }}</span>
+      <span class="user-type">{{ accountIdentity }}</span>
+    </div>
+  </div>
+  <div class="header-actions">
+    <el-dropdown @command="handleCommand" trigger="click">
+      <el-button type="text" class="menu-btn">
+        <el-icon><Setting /></el-icon>
+      </el-button>
+      <template #dropdown>
+        <el-dropdown-menu>
+        <el-dropdown-item command="upgrade">
+          <el-icon><Opportunity /></el-icon>
+          升级VIP
+        </el-dropdown-item>
+        <el-dropdown-item command="changePassword">
+          <el-icon><Lock /></el-icon>
+          修改密码
+        </el-dropdown-item>
+        <el-dropdown-item command="deactivate" divided>
+          <el-icon><Delete /></el-icon>
+          注销账号
+        </el-dropdown-item>
+        <el-dropdown-item command="logout" divided>
+          <el-icon><SwitchButton /></el-icon>
+          退出登录
+        </el-dropdown-item>
+      </el-dropdown-menu>
+      </template>
+    </el-dropdown>
+  </div>
+</el-header>
       
       <el-main class="chat-main">
         <div class="messages" ref="messagesRef">

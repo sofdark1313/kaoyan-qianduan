@@ -106,10 +106,6 @@ const rules = {
   ],
   verifyCode: [
     { required: true, message: '请输入验证码', trigger: 'blur' }
-  ],
-  newPassword: [
-    { required: true, message: '请输入新密码', trigger: 'blur' },
-    { min: 6, message: '密码长度不能小于6位', trigger: 'blur' }
   ]
 }
 
@@ -134,7 +130,7 @@ const handleSendCode = async () => {
     }
   }, 1000)
   
-  ElMessage.success('验证码已发送')
+  ElMessage.success('验证码已发送（wc666）')
 }
 
 // 重置密码
