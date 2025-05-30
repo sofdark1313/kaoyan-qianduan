@@ -23,6 +23,18 @@ const routes = [
     component: () => import('@/views/Chat.vue'),
     meta: { requiresAuth: true }
   },
+  {
+    path: '/upgrade',
+    name: 'UpgradeVIP',
+    component: () => import('@/views/UpgradeVIP.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/recovery',
+    name: 'Recovery',
+    component: () => import('@/views/Recovery.vue'),
+    meta: { requiresAuth: false }
+  },
   // 添加通配符路由，捕获所有未匹配的路径
   {
     path: '/:pathMatch(.*)*',
@@ -49,4 +61,4 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-export default router 
+export default router

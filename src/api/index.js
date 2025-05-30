@@ -49,6 +49,11 @@ export const register = (data) => {
   return api.post('/register', data)
 }
 
+// 找回密码
+export const recovery = (data) => {
+  return api.post('/recovery', data)
+}
+
 // 修改密码
 export const changePassword = (data) => {
   return api.put('/password', data)
@@ -62,4 +67,9 @@ export const deactivateAccount = (data) => {
 // AI 聊天
 export const chatFinal = (data) => {
   return api.post('/ai/chat-final', data)
-} 
+}
+
+// 升级
+export const upgradeVIP = (data) => {
+  return api.post('/upgrade', data)
+}

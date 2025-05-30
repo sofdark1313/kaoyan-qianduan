@@ -16,19 +16,23 @@
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="changePassword">
-                  <el-icon><Lock /></el-icon>
-                  修改密码
-                </el-dropdown-item>
-                <el-dropdown-item command="deactivate" divided>
-                  <el-icon><Delete /></el-icon>
-                  注销账号
-                </el-dropdown-item>
-                <el-dropdown-item command="logout" divided>
-                  <el-icon><SwitchButton /></el-icon>
-                  退出登录
-                </el-dropdown-item>
-              </el-dropdown-menu>
+              <el-dropdown-item command="upgrade">
+                <el-icon><Opportunity /></el-icon>
+                升级VIP
+              </el-dropdown-item>
+              <el-dropdown-item command="changePassword">
+                <el-icon><Lock /></el-icon>
+                修改密码
+              </el-dropdown-item>
+              <el-dropdown-item command="deactivate" divided>
+                <el-icon><Delete /></el-icon>
+                注销账号
+              </el-dropdown-item>
+              <el-dropdown-item command="logout" divided>
+                <el-icon><SwitchButton /></el-icon>
+                退出登录
+              </el-dropdown-item>
+            </el-dropdown-menu>
             </template>
           </el-dropdown>
         </div>
@@ -308,6 +312,9 @@ const scrollToBottom = () => {
 // 处理下拉菜单命令
 const handleCommand = (command) => {
   switch (command) {
+    case 'upgrade':
+      router.push('/upgrade')
+      break
     case 'changePassword':
       passwordDialog.value = true
       break

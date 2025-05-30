@@ -43,6 +43,34 @@
           />
         </el-form-item>
 
+        <el-form-item prop="phoneNumber">
+          <el-input
+            v-model="form.phoneNumber"
+            :prefix-icon="Phone"
+            placeholder="请输入手机号码"
+            size="large"
+          />
+        </el-form-item>
+
+        <el-form-item prop="verifyCode">
+          <div class="verify-code-wrapper">
+            <el-input
+              v-model="form.verifyCode"
+              :prefix-icon="Key"
+              placeholder="请输入验证码"
+              size="large"
+            />
+            <el-button 
+              type="primary" 
+              :disabled="cooldown > 0"
+              @click="handleSendCode"
+              class="verify-code-btn"
+            >
+              {{ cooldown > 0 ? `${cooldown}秒后重试` : '获取验证码' }}
+            </el-button>
+          </div>
+        </el-form-item>
+
         <div class="form-footer">
           <el-button
             type="primary"
@@ -74,30 +102,59 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { User, Lock, UserFilled } from '@element-plus/icons-vue'
+import { User, Lock, UserFilled, Phone, Key } from '@element-plus/icons-vue'
 import { register } from '@/api'
 
 const router = useRouter()
 const formRef = ref(null)
 const loading = ref(false)
+const cooldown = ref(0)
 
 const form = reactive({
   account: '',
   password: '',
-  accountName: ''
+  accountName: '',
+  phoneNumber: '',
+  verifyCode: ''
 })
 
 const rules = {
-  account: [
-    { required: true, message: '请输入账号', trigger: 'blur' }
-  ],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, message: '密码长度不能小于6位', trigger: 'blur' }
-  ],
-  accountName: [
-    { required: true, message: '请输入用户昵称', trigger: 'blur' }
+  phoneNumber: [
+    { required: true, message: '请输入手机号码', trigger: 'blur' },
+    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
   ]
+}
+
+// 发送验证码
+const handleSendCode = async () => {
+  if (!form.phoneNumber) {
+    ElMessage.warning('请先输入手机号码')
+    return
+  }
+  
+  if (!/^1[3-9]\d{9}$/.test(form.phoneNumber)) {
+    ElMessage.warning('请输入正确的手机号码')
+    return
+  }
+
+  try {
+    // TODO: 调用发送验证码接口
+    // const res = await sendVerifyCode(form.phoneNumber)
+    
+    // 开始倒计时
+    cooldown.value = 60
+    const timer = setInterval(() => {
+      cooldown.value--
+      if (cooldown.value <= 0) {
+        clearInterval(timer)
+      }
+    }, 1000)
+    
+    ElMessage.success('验证码已发送')
+  } catch (error) {
+    console.error('Send verify code error:', error)
+    ElMessage.error('验证码发送失败，请稍后重试')
+  }
 }
 
 const handleSubmit = async () => {
@@ -269,4 +326,32 @@ h2 {
     padding-bottom: 32px;
   }
 }
-</style> 
+
+.verify-code-wrapper {
+  display: flex;
+  gap: 12px;
+}
+
+.verify-code-btn {
+  flex-shrink: 0;
+  height: 40px;
+  padding: 0 20px;
+  font-size: 14px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.verify-code-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.verify-code-btn:disabled {
+  background: #e0e0e0;
+  cursor: not-allowed;
+}
+</style>
