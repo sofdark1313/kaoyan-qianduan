@@ -73,3 +73,31 @@ export const chatFinal = (data) => {
 export const upgradeVIP = (data) => {
   return api.post('/upgrade', data)
 }
+
+// 获取聊天记录
+export const getChatHistory = (params) => {
+  return api.get('/chat/history', {
+    params: {
+      accountId: params.accountId,
+      dialogId: params.dialogId
+    }
+  })
+}
+
+// 保存聊天记录
+export const saveChatHistory = (data) => {
+  return api.post('/chat/history', data)
+}
+
+// 删除聊天记录
+export const deleteChatHistory = (accountId, dialogId) => {
+  return api.delete('/chat/history', {
+    data: { accountId, dialogId }
+  })
+}
+
+export const getAccountInfo = (accountId) => {
+  return api.get(`/account/${accountId}`,{
+    data: { accountId }
+  })
+}

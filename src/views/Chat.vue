@@ -1,99 +1,152 @@
 <template>
   <div class="chat-container">
     <el-container class="chat-layout">
-      <el-header class="chat-header">
-  <div class="user-info">
-    <el-avatar :size="36" :icon="UserFilled" class="avatar" />
-    <div class="user-details">
-      <span class="username">{{ accountName }}</span>
-      <span class="user-type">{{ accountIdentity }}</span>
-    </div>
-  </div>
-  <div class="header-actions">
-    <el-dropdown @command="handleCommand" trigger="click">
-      <el-button type="text" class="menu-btn">
-        <el-icon><Setting /></el-icon>
-      </el-button>
-      <template #dropdown>
-        <el-dropdown-menu>
-        <el-dropdown-item command="upgrade">
-          <el-icon><Opportunity /></el-icon>
-          升级VIP
-        </el-dropdown-item>
-        <el-dropdown-item command="changePassword">
-          <el-icon><Lock /></el-icon>
-          修改密码
-        </el-dropdown-item>
-        <el-dropdown-item command="deactivate" divided>
-          <el-icon><Delete /></el-icon>
-          注销账号
-        </el-dropdown-item>
-        <el-dropdown-item command="logout" divided>
-          <el-icon><SwitchButton /></el-icon>
-          退出登录
-        </el-dropdown-item>
-      </el-dropdown-menu>
-      </template>
-    </el-dropdown>
-  </div>
-</el-header>
-      
-      <el-main class="chat-main">
-        <div class="messages" ref="messagesRef">
-          <template v-if="messages.length === 0">
-            <div class="welcome-message">
-              <img src="../assets/logo.ico" alt="Logo" class="welcome-logo" />
-              <h2>欢迎使用 AI 学业助手</h2>
-              <p>我可以帮助你在学业上的选择，请把你的任务交给我吧~</p>
-              
-              <div class="question-grid">
-                <div 
-                  v-for="(item, index) in quickQuestions" 
-                  :key="index"
-                  class="question-card"
-                  @click="askQuickQuestion(item.question)"
-                >
-                  {{ item.question }}
-                </div>
-              </div>
-            </div>
-          </template>
-          <template v-else>
-            <div v-for="(message, index) in messages" 
-                 :key="index" 
-                 :class="['message', message.role === 'user' ? 'message-user' : 'message-ai']">
-              <div class="message-avatar">
-                <el-avatar :size="36" :icon="message.role === 'user' ? UserFilled : Monitor" />
-              </div>
-              <div class="message-content">
-                <div class="message-text">{{ message.content }}</div>
-                <div class="message-time">{{ formatTime(message.timestamp || Date.now()) }}</div>
-              </div>
-            </div>
-          </template>
-        </div>
-      </el-main>
-      
-      <el-footer class="chat-footer">
-        <div class="input-wrapper">
-          <el-input
-            v-model="inputMessage"
-            type="textarea"
-            :rows="3"
-            placeholder="输入消息..."
-            resize="none"
-            @keydown.enter.exact.prevent="sendMessage"
-          />
+      <!-- 侧边栏 -->
+      <el-aside class="chat-sidebar" :width="sidebarCollapsed ? '64px' : '280px'" :class="{ 'collapsed': sidebarCollapsed }">
+        <div class="sidebar-header">
+          <h3 v-if="!sidebarCollapsed" class="app-title">AI 助学</h3>
           <el-button 
+  type="text" 
+  @click="toggleSidebar"
+  class="collapse-btn"
+>
+  <el-icon>
+    <Menu />
+  </el-icon>
+</el-button>
+          <el-button 
+            v-if="!sidebarCollapsed"
             type="primary" 
-            :loading="loading" 
-            @click="sendMessage"
-            class="send-btn"
+            size="small" 
+            @click="createNewDialog"
+            class="new-dialog-btn"
           >
-            发送
+            <el-icon><Plus /></el-icon>
+            新建对话
           </el-button>
         </div>
-      </el-footer>
+        <div class="dialog-list">
+          <div 
+            v-for="dialog in dialogList" 
+            :key="dialog.dialogId"
+            :class="['dialog-item', { active: currentDialogId === dialog.dialogId }]"
+            @click="switchDialog(dialog.dialogId)"
+          >
+            <div class="dialog-info" :title="dialog.title || `对话 ${dialog.dialogId}`">
+              <div class="dialog-title">
+                <el-icon class="dialog-icon"><ChatLineRound /></el-icon>
+                {{ sidebarCollapsed ? dialog.title?.charAt(0) || '#' : dialog.title || `对话 ${dialog.dialogId}` }}
+              </div>
+              <div v-if="!sidebarCollapsed" class="dialog-time">{{ formatDialogTime(dialog.lastMessageTime) }}</div>
+            </div>
+            <el-button 
+              v-if="!sidebarCollapsed"
+              type="text" 
+              size="small" 
+              @click.stop="deleteDialog(dialog.dialogId)"
+              class="delete-btn"
+            >
+              <el-icon><Delete /></el-icon>
+            </el-button>
+          </div>
+        </div>
+      </el-aside>
+
+      <el-container class="main-chat">
+        <el-header class="chat-header">
+          <div class="user-info">
+            <el-avatar :size="36" :icon="UserFilled" class="avatar" />
+            <div class="user-details">
+              <span class="username">{{ accountName }}</span>
+              <span class="user-type">{{ accountIdentity }}</span>
+            </div>
+          </div>
+          <div class="header-actions">
+            <el-dropdown @command="handleCommand" trigger="click">
+              <el-button type="text" class="menu-btn">
+                <el-icon><Setting /></el-icon>
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item command="upgrade">
+                    <el-icon><Opportunity /></el-icon>
+                    升级VIP
+                  </el-dropdown-item>
+                  <el-dropdown-item command="changePassword">
+                    <el-icon><Lock /></el-icon>
+                    修改密码
+                  </el-dropdown-item>
+                  <el-dropdown-item command="deactivate" divided>
+                    <el-icon><Delete /></el-icon>
+                    注销账号
+                  </el-dropdown-item>
+                  <el-dropdown-item command="logout" divided>
+                    <el-icon><SwitchButton /></el-icon>
+                    退出登录
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
+        </el-header>
+        
+        <el-main class="chat-main">
+          <div class="messages" ref="messagesRef">
+            <template v-if="messages.length === 0">
+              <div class="welcome-message">
+                <img src="../assets/logo.ico" alt="Logo" class="welcome-logo" />
+                <h2>欢迎使用 AI 学业助手</h2>
+                <p>我可以帮助你在学业上的选择，请把你的任务交给我吧~</p>
+                
+                <div class="question-grid">
+                  <div 
+                    v-for="(item, index) in quickQuestions" 
+                    :key="index"
+                    class="question-card"
+                    @click="askQuickQuestion(item.question)"
+                  >
+                    {{ item.question }}
+                  </div>
+                </div>
+              </div>
+            </template>
+            <template v-else>
+              <div v-for="(message, index) in messages" 
+                   :key="index" 
+                   :class="['message', message.role === 'user' ? 'message-user' : 'message-ai']">
+                <div class="message-avatar">
+                  <el-avatar :size="36" :icon="message.role === 'user' ? UserFilled : Monitor" />
+                </div>
+                <div class="message-content">
+                  <div class="message-text">{{ message.content }}</div>
+                  <div class="message-time">{{ formatTime(message.timestamp || Date.now()) }}</div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </el-main>
+        
+        <el-footer class="chat-footer">
+          <div class="input-wrapper">
+            <el-input
+              v-model="inputMessage"
+              type="textarea"
+              :rows="3"
+              placeholder="输入消息..."
+              resize="none"
+              @keydown.enter.exact.prevent="sendMessage"
+            />
+            <el-button 
+              type="primary" 
+              :loading="loading" 
+              @click="sendMessage"
+              class="send-btn"
+            >
+              发送
+            </el-button>
+          </div>
+        </el-footer>
+      </el-container>
     </el-container>
 
     <!-- 修改密码对话框 -->
@@ -140,10 +193,16 @@
       center
       destroy-on-close
     >
-      <div class="deactivate-warning">
-        <el-icon class="warning-icon"><Warning /></el-icon>
-        <p>确定要注销账号吗？此操作不可恢复！</p>
-      </div>
+      <el-form :model="deactivateForm" :rules="deactivateRules" ref="deactivateFormRef">
+        <el-form-item prop="password" label="当前密码">
+          <el-input
+            v-model="deactivateForm.password"
+            type="password"
+            show-password
+            placeholder="请输入当前密码以确认注销"
+          />
+        </el-form-item>
+      </el-form>
       <template #footer>
         <el-button @click="deactivateDialog = false">取消</el-button>
         <el-button
@@ -159,9 +218,9 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, nextTick } from 'vue'
+import { ref, reactive, onMounted, nextTick, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { 
   Setting, 
   UserFilled, 
@@ -174,17 +233,52 @@ import {
   School,
   Collection,
   Switch,
-  Opportunity
+  Opportunity,
+  Plus,
+  Expand,
+  Fold,
+  ChatLineRound,
+  Menu
 } from '@element-plus/icons-vue'
-import { chatFinal, changePassword, deactivateAccount } from '@/api'
+import { 
+  chatFinal, 
+  changePassword, 
+  deactivateAccount, 
+  getChatHistory, 
+  saveChatHistory, 
+  deleteChatHistory,
+  getAccountInfo  // 新增API导入
+} from '@/api'
 
 const router = useRouter()
 const messagesRef = ref(null)
 const loading = ref(false)
 const inputMessage = ref('')
 const messages = ref([])
-const accountName = ref(localStorage.getItem('accountName') || '用户')
-const accountIdentity = ref(localStorage.getItem('accountIdentity') || '普通用户')
+const accountName = ref('用户')
+const accountIdentity = ref('普通用户')
+const accountId = ref(parseInt(localStorage.getItem('accountId')) || 10001)
+
+// 新增获取账户信息的方法
+const fetchAccountInfo = async () => {
+  try {
+    const res = await getAccountInfo(accountId.value)
+    if (res.code === 1 && res.data) {
+      accountName.value = res.data.accountName || '用户'
+      accountIdentity.value = res.data.accountIdentity || '普通用户'
+      // 可选：保存到localStorage
+      localStorage.setItem('accountName', accountName.value)
+      localStorage.setItem('accountIdentity', accountIdentity.value)
+    }
+  } catch (error) {
+    console.error('获取账户信息失败:', error)
+  }
+}
+
+// 对话管理相关
+const dialogList = ref([])
+const currentDialogId = ref(null)
+const nextDialogId = ref(1)
 
 // 密码修改相关
 const passwordDialog = ref(false)
@@ -205,6 +299,15 @@ const passwordRules = {
 // 注销账号相关
 const deactivateDialog = ref(false)
 const deactivateLoading = ref(false)
+const deactivateFormRef = ref(null)
+const deactivateForm = reactive({
+  password: ''
+})
+const deactivateRules = {
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' }
+  ]
+}
 
 // 在script setup部分添加
 const messageCache = new Map()
@@ -239,7 +342,7 @@ const askQuickQuestion = (question) => {
   sendMessage()
 }
 
-// 修改sendMessage函数
+// 修改sendMessage函数，添加保存聊天记录功能
 const sendMessage = async () => {
   if (!inputMessage.value.trim()) return
   
@@ -282,8 +385,13 @@ const sendMessage = async () => {
         })
       } else {
         ElMessage.error(res.msg || '发送失败')
+        return
       }
     }
+    
+    // 保存聊天记录到数据库
+    await saveChatHistoryToDb()
+    
   } catch (error) {
     console.error('Chat error:', error)
     ElMessage.error('发送失败，请稍后重试')
@@ -291,6 +399,148 @@ const sendMessage = async () => {
     loading.value = false
     await nextTick()
     scrollToBottom()
+  }
+}
+
+// 保存聊天记录到数据库
+const saveChatHistoryToDb = async () => {
+  if (!currentDialogId.value || messages.value.length === 0) return
+  
+  try {
+    const conversation = messages.value.map(msg => ({
+      role: msg.role,
+      content: msg.content,
+      timestamp: msg.timestamp
+    }))
+    
+    await saveChatHistory({
+      accountId: accountId.value,
+      dialogId: currentDialogId.value,
+      conversation
+    })
+    
+    // 更新对话列表中的最后消息时间
+    const dialog = dialogList.value.find(d => d.dialogId === currentDialogId.value)
+    if (dialog) {
+      dialog.lastMessageTime = Date.now()
+      saveDialogList() // 保存对话列表到本地存储
+    }
+  } catch (error) {
+    console.error('Save chat history error:', error)
+  }
+}
+
+// 保存对话列表到本地存储
+const isCollapse = ref(false)
+const sidebarCollapsed = ref(false)
+
+const toggleSidebar = () => {
+  sidebarCollapsed.value = !sidebarCollapsed.value
+}
+
+const saveDialogList = () => {
+  const key = `dialogList_${accountId.value}`
+  localStorage.setItem(key, JSON.stringify(dialogList.value))
+}
+
+// 加载聊天记录
+const loadChatHistory = async (dialogId) => {
+  try {
+    const res = await getChatHistory({
+      accountId: accountId.value,
+      dialogId
+    })
+    if (res.code === 1 && res.data && res.data.conversation) {
+      messages.value = res.data.conversation.map(msg => ({
+        ...msg,
+        timestamp: msg.timestamp ? new Date(msg.timestamp).getTime() : Date.now()
+      }))
+    } else {
+      messages.value = []
+    }
+  } catch (error) {
+    console.error('Load chat history error:', error)
+    messages.value = []
+  }
+}
+
+// 创建新对话
+const createNewDialog = () => {
+  const newDialogId = nextDialogId.value++
+  const newDialog = {
+    dialogId: newDialogId,
+    title: `对话 ${newDialogId}`,
+    lastMessageTime: Date.now()
+  }
+  
+  dialogList.value.unshift(newDialog)
+  saveDialogList() // 保存对话列表
+  switchDialog(newDialogId)
+}
+
+// 切换对话
+const switchDialog = async (dialogId) => {
+  if (currentDialogId.value === dialogId) return
+  
+  currentDialogId.value = dialogId
+  await loadChatHistory(dialogId)
+  await nextTick()
+  scrollToBottom()
+}
+
+// 删除对话
+const deleteDialog = async (dialogId) => {
+  try {
+    await ElMessageBox.confirm('确定要删除这个对话吗？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+    
+    // 从数据库删除
+    await deleteChatHistory(accountId.value, dialogId)
+    
+    // 从列表中移除
+    const index = dialogList.value.findIndex(d => d.dialogId === dialogId)
+    if (index > -1) {
+      dialogList.value.splice(index, 1)
+      saveDialogList() // 保存对话列表
+    }
+    
+    // 如果删除的是当前对话，切换到第一个对话或创建新对话
+    if (currentDialogId.value === dialogId) {
+      if (dialogList.value.length > 0) {
+        switchDialog(dialogList.value[0].dialogId)
+      } else {
+        createNewDialog()
+      }
+    }
+    
+    ElMessage.success('删除成功')
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Delete dialog error:', error)
+      ElMessage.error('删除失败')
+    }
+  }
+}
+
+// 格式化对话时间
+const formatDialogTime = (timestamp) => {
+  const date = new Date(timestamp)
+  const now = new Date()
+  const diff = now.getTime() - date.getTime()
+  
+  if (diff < 24 * 60 * 60 * 1000) {
+    // 今天
+    return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+  } else if (diff < 7 * 24 * 60 * 60 * 1000) {
+    // 一周内
+    const days = ['日', '一', '二', '三', '四', '五', '六']
+    return `周${days[date.getDay()]}`
+  } else {
+    // 更早
+    return date.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })
   }
 }
 
@@ -353,9 +603,15 @@ const handleChangePassword = async () => {
 
 // 注销账号
 const handleDeactivate = async () => {
+  if (!deactivateFormRef.value) return
+  
   try {
+    await deactivateFormRef.value.validate()
     deactivateLoading.value = true
-    const res = await deactivateAccount({ password: passwordForm.oldPassword })
+    
+    const res = await deactivateAccount({ 
+      password: deactivateForm.password 
+    })
     if (res.code === 1) {
       ElMessage.success('账号已注销')
       handleLogout()
@@ -380,22 +636,9 @@ const handleLogout = () => {
   router.push('/login')
 }
 
-// 监听页面加载
-onMounted(() => {
-  scrollToBottom()
-})
 // 在script setup部分添加
 const pageSize = 10
 const displayedMessages = ref([])
-
-// 初始化时只加载最近的消息
-onMounted(() => {
-  if (messages.value.length > pageSize) {
-    displayedMessages.value = messages.value.slice(-pageSize)
-  } else {
-    displayedMessages.value = [...messages.value]
-  }
-})
 
 // 添加加载更多消息的函数
 const loadMoreMessages = () => {
@@ -406,6 +649,41 @@ const loadMoreMessages = () => {
   )
   displayedMessages.value = [...newMessages, ...displayedMessages.value]
 }
+
+// 初始化
+onMounted(async () => {
+  try {
+    await fetchAccountInfo()
+    // 获取当前用户的对话列表
+    const key = `dialogList_${accountId.value}`
+    const savedDialogs = localStorage.getItem(key)
+    if (savedDialogs) {
+      dialogList.value = JSON.parse(savedDialogs)
+      nextDialogId.value = Math.max(...dialogList.value.map(d => d.dialogId)) + 1
+    }
+    
+    // 如果没有对话，创建一个新对话
+    if (dialogList.value.length === 0) {
+      createNewDialog()
+    } else {
+      // 默认打开第一个对话
+      switchDialog(dialogList.value[0].dialogId)
+    }
+    
+    // 初始化时只加载最近的消息
+    if (messages.value.length > pageSize) {
+      displayedMessages.value = messages.value.slice(-pageSize)
+    } else {
+      displayedMessages.value = [...messages.value]
+    }
+    
+    scrollToBottom()
+  } catch (error) {
+    console.error('Init error:', error)
+    // 出错时创建新对话
+    createNewDialog()
+  }
+})
 </script>
 
 <style scoped>
@@ -422,7 +700,129 @@ const loadMoreMessages = () => {
 }
 
 .chat-layout {
-  height: 100%;
+  height: 100vh;
+}
+
+.chat-sidebar {
+  background: #f5f7fa;
+  border-right: 1px solid #e6e6e6;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-sidebar.collapsed {
+  padding: 8px;
+}
+
+.sidebar-header {
+  padding: 16px;
+  border-bottom: 1px solid #e6e6e6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.app-title {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+  flex: 1;
+}
+
+.collapse-btn {
+  padding: 8px;
+  margin: 0 10px;
+  color: #606266;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.collapse-btn:hover {
+  color: #409eff;
+}
+
+.new-dialog-btn {
+  margin-left: 8px;
+  border-radius: 6px;
+}
+
+.dialog-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.dialog-item {
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.dialog-item:hover {
+  background: #ecf5ff;
+}
+
+.dialog-item.active {
+  background: #409eff;
+  color: white;
+}
+
+.dialog-item.active .dialog-time,
+.dialog-item.active .delete-btn {
+  color: #fff;
+}
+
+.dialog-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.dialog-title {
+  font-size: 14px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dialog-icon {
+  font-size: 16px;
+}
+
+.dialog-time {
+  font-size: 12px;
+  color: #909399;
+}
+
+.delete-btn {
+  opacity: 0;
+  color: #909399;
+  transition: opacity 0.2s ease;
+}
+
+.dialog-item:hover .delete-btn {
+  opacity: 1;
+}
+
+.delete-btn:hover {
+  color: #f56c6c;
+}
+
+.main-chat {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
 .chat-header {
