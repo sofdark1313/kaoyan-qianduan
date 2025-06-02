@@ -24,6 +24,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/query',
+    name: 'Query',
+    component: () => import('@/views/Query.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/upgrade',
     name: 'UpgradeVIP',
     component: () => import('@/views/UpgradeVIP.vue'),

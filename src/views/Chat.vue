@@ -68,6 +68,10 @@
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
+                  <el-dropdown-item command="query">
+                    <el-icon><Search /></el-icon>
+                    查询界面
+                  </el-dropdown-item>
                   <el-dropdown-item command="upgrade">
                     <el-icon><Opportunity /></el-icon>
                     升级VIP
@@ -238,7 +242,8 @@ import {
   Expand,
   Fold,
   ChatLineRound,
-  Menu
+  Menu,
+  Search
 } from '@element-plus/icons-vue'
 import { 
   chatFinal, 
@@ -561,7 +566,12 @@ const scrollToBottom = () => {
 
 // 处理下拉菜单命令
 const handleCommand = (command) => {
+  console.log('处理命令:', command) // 添加调试日志
   switch (command) {
+    case 'query':
+      console.log('准备跳转到查询页面')
+      router.push('/query')
+      break
     case 'upgrade':
       router.push('/upgrade')
       break

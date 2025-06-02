@@ -1,6 +1,5 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+// 不需要导入未使用的组件
 </script>
 
 <template>

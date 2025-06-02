@@ -69,6 +69,11 @@ export const chatFinal = (data) => {
   return api.post('/ai/chat-final', data)
 }
 
+// AI 查询
+export const chatQuery = (data) => {
+  return api.post('/ai/chat-query', data)
+}
+
 // 升级
 export const upgradeVIP = (data) => {
   return api.post('/upgrade', data)
