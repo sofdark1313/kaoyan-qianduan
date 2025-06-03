@@ -264,20 +264,9 @@ const accountName = ref('用户')
 const accountIdentity = ref('普通用户')
 const accountId = ref(parseInt(localStorage.getItem('accountId')) || 10001)
 
-// 在Chat.vue的methods中添加
-checkVIPPermission() {
-  return localStorage.getItem('accountIdentity') === 'VIP用户'
-},
 
-// 修改消息发送方法
-sendMessage() {
-  if (!this.checkVIPPermission()) {
-    this.$message.warning('请升级VIP会员解锁完整聊天功能')
-    this.$router.push('/upgrade')
-    return
-  }
-  // 原有发送逻辑
-}
+
+
 
 // 新增获取账户信息的方法
 const fetchAccountInfo = async () => {
