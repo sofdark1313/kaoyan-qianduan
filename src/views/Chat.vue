@@ -264,6 +264,21 @@ const accountName = ref('用户')
 const accountIdentity = ref('普通用户')
 const accountId = ref(parseInt(localStorage.getItem('accountId')) || 10001)
 
+// 在Chat.vue的methods中添加
+checkVIPPermission() {
+  return localStorage.getItem('accountIdentity') === 'VIP用户'
+},
+
+// 修改消息发送方法
+sendMessage() {
+  if (!this.checkVIPPermission()) {
+    this.$message.warning('请升级VIP会员解锁完整聊天功能')
+    this.$router.push('/upgrade')
+    return
+  }
+  // 原有发送逻辑
+}
+
 // 新增获取账户信息的方法
 const fetchAccountInfo = async () => {
   try {
@@ -317,6 +332,10 @@ const deactivateRules = {
 // 在script setup部分添加
 const messageCache = new Map()
 
+const checkVIPPermission = () => {
+  return localStorage.getItem('accountIdentity') === 'VIP用户'
+}
+
 // 添加快速问题列表
 const quickQuestions = [
   {
@@ -349,6 +368,11 @@ const askQuickQuestion = (question) => {
 
 // 修改sendMessage函数，添加保存聊天记录功能
 const sendMessage = async () => {
+  if (!checkVIPPermission()) {
+    ElMessage.warning('请升级VIP会员解锁完整聊天功能')
+    router.push('/upgrade')
+    return
+  }
   if (!inputMessage.value.trim()) return
   
   const userMessage = inputMessage.value.trim()
@@ -1385,6 +1409,17 @@ onMounted(async () => {
     font-size: 14px;
   }
 }
+.query-header {
+  padding: 12px 24px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.search-input {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
 </style>
 
 /* 考研问题卡片样式 */
