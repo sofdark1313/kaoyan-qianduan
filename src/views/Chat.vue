@@ -301,7 +301,7 @@ const passwordRules = {
   oldPassword: [{ required: true, message: '请输入原密码', trigger: 'blur' }],
   newPassword: [
     { required: true, message: '请输入新密码', trigger: 'blur' },
-    { min: 6, message: '密码长度不能小于6位', trigger: 'blur' }
+    { min: 1, message: '密码长度不能小于1位', trigger: 'blur' }
   ]
 }
 
@@ -328,24 +328,17 @@ const checkVIPPermission = () => {
 // 添加快速问题列表
 const quickQuestions = [
   {
-    title: "选校指南",
-    question: "我的分数适合报考哪些学校？",
-    icon: "School"
+    question: "我要考科软，应该怎么准备？"
   },
   {
-    title: "专业选择",
-    question: "如何选择适合自己的院校和专业？",
-    icon: "Collection"
+    question: "考研数学怎么准备？"
+
   },
   {
-    title: "调剂指导",
-    question: "考研调剂需要注意什么？",
-    icon: "Switch"
+    question: "考研调剂需要注意什么？"
   },
   {
-    title: "就业前景",
-    question: "如何评估学校的就业前景？",
-    icon: "Opportunity"
+    question: "如何评估学校的就业前景？"
   }
 ]
 
@@ -887,7 +880,7 @@ onMounted(async () => {
 }
 
 .avatar {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   box-shadow: 0 4px 8px rgba(99, 102, 241, 0.2);
   transition: transform 0.3s ease;
 }
@@ -964,6 +957,7 @@ onMounted(async () => {
   animation: float 3s ease-in-out infinite;
 }
 
+
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
@@ -975,7 +969,7 @@ onMounted(async () => {
   font-weight: 600;
   color: #333;
   margin-bottom: 16px;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1131,7 +1125,7 @@ onMounted(async () => {
 }
 
 .message-user .message-text {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   color: #fff;
   border-radius: 16px 16px 0 16px;
 }
@@ -1172,7 +1166,7 @@ onMounted(async () => {
 }
 
 .message-user .message-avatar :deep(.el-avatar) {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
 }
 
 .chat-footer {
@@ -1209,7 +1203,7 @@ onMounted(async () => {
   padding: 0 28px;
   font-size: 15px;
   font-weight: 500;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   border: none;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
@@ -1217,13 +1211,13 @@ onMounted(async () => {
 }
 
 .send-btn:hover {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
   transform: translateY(-2px);
 }
 
 .send-btn:active {
-  background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   transform: translateY(0);
 }
 
@@ -1313,14 +1307,14 @@ onMounted(async () => {
 }
 
 :deep(.el-button--primary) {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  border: none;
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
+    border: none;
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
 }
 
 :deep(.el-button--primary:hover) {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
   transform: translateY(-2px);
 }
 
@@ -1410,172 +1404,3 @@ onMounted(async () => {
 }
 
 </style>
-
-/* 考研问题卡片样式 */
-.quick-questions {
-  margin-top: 40px;
-  width: 100%;
-  max-width: 1000px;
-  padding: 0 20px;
-}
-
-.floating-container {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 24px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-  padding: 32px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(99, 102, 241, 0.1);
-  animation: floatIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes floatIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.floating-card h3 {
-  font-size: 24px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 24px;
-  text-align: center;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.question-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-}
-
-.question-card {
-  background: #fff;
-  padding: 24px;
-  border-radius: 16px;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-  border: 1px solid rgba(99, 102, 241, 0.1);
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
-}
-
-.question-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.question-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.15);
-  border-color: rgba(99, 102, 241, 0.3);
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
-}
-
-.question-card:hover::before {
-  opacity: 1;
-}
-
-.card-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #f0f2ff 0%, #e6e9ff 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.question-card:hover .card-icon {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  transform: scale(1.05);
-}
-
-.card-icon .el-icon {
-  font-size: 24px;
-  color: #6366f1;
-  transition: all 0.3s ease;
-}
-
-.question-card:hover .card-icon .el-icon {
-  color: #fff;
-}
-
-.question-card h4 {
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
-  transition: color 0.3s ease;
-}
-
-.question-card:hover h4 {
-  color: #6366f1;
-}
-
-.question-card p {
-  font-size: 14px;
-  line-height: 1.6;
-  color: #666;
-  margin: 0;
-}
-
-@media screen and (max-width: 768px) {
-  .quick-questions {
-    padding: 0 16px;
-  }
-
-  .floating-card {
-    padding: 24px;
-    border-radius: 20px;
-  }
-
-  .floating-card h3 {
-    font-size: 20px;
-    margin-bottom: 20px;
-  }
-
-  .question-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  
-  .question-card {
-    padding: 20px;
-  }
-  
-  .card-icon {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .card-icon .el-icon {
-    font-size: 20px;
-  }
-  
-  .question-card h4 {
-    font-size: 16px;
-  }
-}

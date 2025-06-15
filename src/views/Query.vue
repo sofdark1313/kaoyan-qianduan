@@ -19,14 +19,21 @@
         <div class="messages" ref="messagesRef">
           <template v-if="messages.length === 0">
             <div class="welcome-message">
-              <div class="welcome-icon">
-                <el-icon><Monitor /></el-icon>
-              </div>
+              <img src="../assets/logo.ico" alt="Logo" class="welcome-logo" />
               <h2>欢迎使用 AI 智能助手</h2>
               <p>您可以向我提问任何问题，我将尽力为您解答</p>
-              <!-- 移除悬浮卡片 -->
+              <div class="question-grid">
+                  <div 
+                    v-for="(item, index) in quickQuestions" 
+                    :key="index"
+                    class="question-card"
+                    @click="askQuickQuestion(item.question)"
+                  >
+                    {{ item.question }}
+                  </div>
+                </div>
             </div>
-          </template>
+          </template> 
           <template v-else>
             <div v-for="(message, index) in messages" 
                  :key="index" 
@@ -126,7 +133,7 @@ const submitQuery = async () => {
     ElMessage.warning('请输入查询内容')
     return
   }
-  
+
   // 添加用户消息
   const userMessage = {
     role: 'user',
@@ -158,7 +165,7 @@ const submitQuery = async () => {
     
     // 格式化大学数据
     let formattedContent = '';
-    if (Array.isArray(responseContent) && responseContent.length > 0 && responseContent[0]['大学名称']) {
+    if (Array.isArray(responseContent) && responseContent.length > 0 ) {
       formattedContent = formatUniversityData(responseContent);
     } else {
       formattedContent = typeof responseContent === 'string' ? responseContent : JSON.stringify(responseContent, null, 2);
@@ -221,8 +228,8 @@ const formatUniversityData = (universities) => {
           '<span class="false-value">✗</span>';
       } else if (field === '公办/民办') {
         value = value === '1' ? '公办' : '民办';
-      } else if (value === null || value === undefined) {
-        value = '-';
+      } else if (value === null || value === undefined  || value === "")  {
+        value = '-----';
       }
       
       rows += `<td>${value}</td>`;
@@ -246,6 +253,23 @@ const formatUniversityData = (universities) => {
   <div style="font-size: 13px; color: #6b7280; margin-top: 8px; text-align: right;">共 ${universities.length} 所大学</div>
 </div>`;
 };
+
+// 添加快速问题列表
+const quickQuestions = [
+  {
+    question: "哪些学校的哪些专业是考408的？"
+  },
+  {
+    question: "985大学的各个计算机类专业都考哪些科目？"
+  }
+]
+
+// 处理快速问题点击事件
+const askQuickQuestion = (question) => {
+  queryForm.value.message = question
+  submitQuery()
+}
+
 
 // 获取用户信息
 onMounted(() => {
@@ -310,7 +334,7 @@ onMounted(() => {
 .page-title {
   font-size: 20px;
   font-weight: 600;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -330,7 +354,7 @@ onMounted(() => {
 }
 
 .avatar {
-  background: linear-gradient(135deg, #409eff 0%, #7e57c2 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   transition: all 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -348,25 +372,31 @@ onMounted(() => {
   scroll-behavior: smooth;
 }
 
-.messages {
-  max-width: 1200px;
-  margin: 0 auto;
+.message {
   display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding-bottom: 16px;
+  gap: 14px;
+  margin-bottom: 28px;
+  width: 100%;
+  animation: messageIn 0.3s ease-out;
+}
+
+.welcome-logo {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 24px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  animation: float 3s ease-in-out infinite;
 }
 
 .welcome-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
   text-align: center;
-  padding: 40px 30px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 16px;
-  margin: 40px auto;
-  max-width: 600px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  transition: all 0.5s ease;
-  animation: floatIn 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  padding: 40px 20px;
 }
 
 @keyframes floatIn {
@@ -383,7 +413,7 @@ onMounted(() => {
   width: 80px;
   height: 80px;
   margin: 0 auto 20px;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -399,7 +429,7 @@ onMounted(() => {
 
 .welcome-message h2 {
   font-size: 28px;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -461,7 +491,7 @@ onMounted(() => {
 }
 
 .user-avatar {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -485,7 +515,7 @@ onMounted(() => {
 }
 
 .message-user .message-content {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   border: none;
   border-top-right-radius: 4px;
   color: #fff;
@@ -543,7 +573,7 @@ onMounted(() => {
   padding: 12px 15px;
   text-align: left;
   font-weight: 600;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   color: white;
 }
 
@@ -583,6 +613,32 @@ onMounted(() => {
   color: #909399;
   margin-top: 8px;
   text-align: right;
+}
+
+.question-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.question-card {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #333;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  animation: floatIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
 .query-footer {
@@ -638,7 +694,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   border: none;
   border-radius: 12px;
   transition: all 0.3s ease;
@@ -647,7 +703,7 @@ onMounted(() => {
 }
 
 .send-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   transform: translateY(-3px);
   box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
 }

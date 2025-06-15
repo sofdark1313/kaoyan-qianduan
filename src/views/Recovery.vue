@@ -165,7 +165,7 @@ const handleRecovery = async () => {
   align-items: center;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }

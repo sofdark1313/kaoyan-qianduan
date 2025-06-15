@@ -185,7 +185,7 @@ const handleSubmit = async () => {
   align-items: center;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -212,7 +212,7 @@ h2 {
   color: #333;
   margin: 0 0 8px;
   font-weight: 600;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -282,7 +282,7 @@ h2 {
   font-size: 16px;
   font-weight: 500;
   border-radius: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   border: none;
   box-shadow: 0 4px 12px rgba(118, 75, 162, 0.2);
   transition: all 0.3s ease;
@@ -290,7 +290,7 @@ h2 {
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(118, 75, 162, 0.3);
-    background: linear-gradient(135deg, #5a6fd6 0%, #6a4494 100%);
+    background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   }
 
   &:active {
@@ -310,7 +310,7 @@ h2 {
   padding: 0 20px;
   font-size: 14px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, hsl(193, 34%, 47%) 0%, hsl(230, 90%, 39%) 100%);
   border: none;
   color: white;
   cursor: pointer;
